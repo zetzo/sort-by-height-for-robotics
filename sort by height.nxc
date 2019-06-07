@@ -1,0 +1,58 @@
+#define TURN_TIME 300
+int wait_time;
+task main ()
+{ wait_time = 4000;
+  SetSensorLowspeed(IN_4); // initialize the us sensor
+  OnFwd (OUT_A, 100); // Start splitter motor
+  while (true)
+  {
+     long time=CurrentTick ();
+     // Wait for detection of a brick
+     int height = Sensor(IN_4);
+     if(height > 0 )
+     {
+       Wait(15);
+       if(Sensor(IN_1) > height) height = Sensor(IN_1);
+     }
+     ClearScreen();
+     switch(height)
+     {
+     case 2:
+       OnFwd (OUT_B, 10);
+       Wait(100);
+       Off( OUT_B);
+       OnFwd (OUT_C, 100);
+       Wait (wait_time);
+       TextOut (0, LCD_LINE3, "height");
+       OnRev (OUT_B, 10);
+       OnRev (OUT_C, 100);
+       break;
+     case 3:
+       OnFwd (OUT_B, 30);
+       Wait(400);
+       Off (OUT_B);
+       OnFwd (OUT_C, 400);
+       Wait (wait_time);
+       TextOut (0, LCD_LINE3, "height");
+       OnRev (OUT_B, 30);
+       Wait(100);
+       OnRev (OUT_C, 400);
+       Wait (wait_time);
+       break;
+     case 4:
+       OnFwd (OUT_B, 10);
+       Wait(100);
+       OnFwd (OUT_C, 100);
+       Wait (800);
+       TextOut (0, LCD_LINE3, "height");
+       OnRev (OUT_B, 10);
+       Wait(100);
+       OnRev (OUT_C, 100);
+       Wait (wait_time);
+       break;
+     }
+     Wait(100); // the switch point motors run for 100ms
+     Off(OUT_BC);
+  }
+}
+
